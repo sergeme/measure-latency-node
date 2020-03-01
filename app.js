@@ -1,7 +1,4 @@
-'use strict'
-
 const assert = require('assert')
-const url = require('url')
 const http = require('http')
 const https = require('https')
 
@@ -23,21 +20,21 @@ const MS_PER_NS = 1e6
 * @param {Function} callback
 */
 
-module.exports =  {
-request: function ({
-  method = 'GET',
-  protocol,
-  hostname,
-  port,
-  path,
-  headers = {},
-  body
-} = {}, callback) {
-  // Validation
-  assert(protocol, 'options.protocol is required')
-  assert(['http:', 'https:'].includes(protocol), 'options.protocol must be one of: "http:", "https:"')
-  assert(hostname, 'options.hostname is required')
-  assert(callback, 'callback is required')
+
+  const request = ({
+    method = 'GET',
+    protocol,
+    hostname,
+    port,
+    path,
+    headers = {},
+    body
+  } = {}, callback) => {
+    // Validation
+    assert(protocol, 'options.protocol is required')
+    assert(['http:', 'https:'].includes(protocol), 'options.protocol must be one of: "http:", "https:"')
+    assert(hostname, 'options.hostname is required')
+    assert(callback, 'callback is required')
 
   // Initialization
   const eventTimes = {
@@ -123,7 +120,7 @@ request: function ({
 * @param {Number} eventTimes.endAt
 * @return {Object} timings - { dnsLookup, tcpConnection, tlsHandshake, firstByte, contentTransfer, total }
 */
-getTimings: function (eventTimes) {
+const getTimings = (eventTimes) => {
   return {
     // There is no DNS lookup with IP address
     dnsLookup: eventTimes.dnsLookupAt !== undefined ?
@@ -138,6 +135,7 @@ getTimings: function (eventTimes) {
   }
 }
 
+
 /**
 * Get duration in milliseconds from process.hrtime()
 * @function getHrTimeDurationInMs
@@ -145,7 +143,7 @@ getTimings: function (eventTimes) {
 * @param {Array} endTime - [seconds, nanoseconds]
 * @return {Number} durationInMs
 */
-getHrTimeDurationInMs: function (startTime, endTime) {
+const getHrTimeDurationInMs = (startTime, endTime) => {
   const secondDiff = endTime[0] - startTime[0]
   const nanoSecondDiff = endTime[1] - startTime[1]
   const diffInNanoSecond = secondDiff * NS_PER_SEC + nanoSecondDiff
@@ -153,9 +151,6 @@ getHrTimeDurationInMs: function (startTime, endTime) {
   return diffInNanoSecond / MS_PER_NS
 }
 
-
-/* Getting timings
-*/
-
-
-};
+module.exports = {
+  request
+}
