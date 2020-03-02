@@ -21,7 +21,7 @@ const MS_PER_NS = 1e6
 */
 
 
-  const request = ({
+  const request = async ({
     method = 'GET',
     protocol,
     hostname,
@@ -37,7 +37,7 @@ const MS_PER_NS = 1e6
     assert(callback, 'callback is required')
 
   // Initialization
-  const eventTimes = {
+  const eventTimes = ({
     // use process.hrtime() as it's not a subject of clock drift
     startAt: process.hrtime(),
     dnsLookupAt: undefined,
@@ -45,7 +45,7 @@ const MS_PER_NS = 1e6
     tlsHandshakeAt: undefined,
     firstByteAt: undefined,
     endAt: undefined
-  }
+  })
 
   // Making request
   const req = (protocol.startsWith('https') ? https : http).request({
@@ -73,7 +73,7 @@ const MS_PER_NS = 1e6
 
       callback(null, {
         headers: res.headers,
-        timings: getTimings(eventTimes),
+        timings: getTimings(eventTimes, hostname),
         body: responseBody
       })
     })
@@ -120,9 +120,10 @@ const MS_PER_NS = 1e6
 * @param {Number} eventTimes.endAt
 * @return {Object} timings - { dnsLookup, tcpConnection, tlsHandshake, firstByte, contentTransfer, total }
 */
-const getTimings = (eventTimes) => {
+const getTimings = (eventTimes, hostname) => {
   return {
     // There is no DNS lookup with IP address
+    hostname: hostname,
     dnsLookup: eventTimes.dnsLookupAt !== undefined ?
       getHrTimeDurationInMs(eventTimes.startAt, eventTimes.dnsLookupAt) : undefined,
     tcpConnection: getHrTimeDurationInMs(eventTimes.dnsLookupAt || eventTimes.startAt, eventTimes.tcpConnectionAt),
