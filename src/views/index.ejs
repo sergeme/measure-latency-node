@@ -21,19 +21,52 @@
       }, 1000);
     </script>
     <div class="container pl-0 pr-0">
-        <div class="card" style="margin-top: 3rem;">
-            <div class="row m-0 px-0 py-3">
-                <div class="col-lg-12">
-                    <h1 class="entry-title h2">Measuring latency between hosts</h1>
-                    <% arr.forEach(function (entry) { %>
-                        <p class="h4"><%=entry.end %></h1>
-                    <% }) %>
-                    <p>Ping Client - Server: <span id="ping">...</span>ms</p>
-                </div>
-            </div>
+      <div class="card" style="margin-top: 3rem;">
+        <div class="row m-0 px-0 py-3">
+          <div class="col-lg-12">
+            <h1 class="entry-title h2">Measuring latency between hosts</h1>
+            <p>Current Ping Client - Server: <span id="ping">...</span>ms</p>
+          </div>      
         </div>
+        <div class="row m-0 px-0 py-3">
+          <div class="col-lg-3 h6">host
+          </div>  
+          <div class="col-lg-3 h6">endpoint
+          </div>  
+          <div class="col-lg-1 h6">lookup
+          </div>  
+          <div class="col-lg-1 h6">socket
+          </div>  
+          <div class="col-lg-1 h6">conn.
+          </div>  
+          <div class="col-lg-1 h6">response
+          </div>      
+          <div class="col-lg-1 h6">total
+          </div>          
+          <div class="col-lg-1 h6">&nbsp;
+          </div>      
+        </div>
+        <% arr.forEach(function (entry) { %>
+        <div class="row m-0 px-0 py-3">
+          <div class="col-lg-3 h6"><%=entry.host%>
+          </div>  
+          <div class="col-lg-3 h6"><%=entry.endpoint%>
+          </div>  
+          <div class="col-lg-1 h6"><%=entry.lookup%>
+          </div>  
+          <div class="col-lg-1 h6"><%=entry.socket%>
+          </div>  
+          <div class="col-lg-1 h6"><%=entry.connect%>
+          </div>  
+          <div class="col-lg-1 h6"><%=entry.response%>
+          </div>      
+          <div class="col-lg-1 h6"><%=entry.end%>
+          </div>          
+          <div class="col-lg-1 h6">&nbsp;
+          </div>      
+        </div>
+        <% }) %>
+      </div>
     </div>
-            
- 
   </body>
 </html>
