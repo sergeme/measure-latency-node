@@ -28,44 +28,35 @@
             <p>Current Ping Client - Server: <span id="ping">...</span>ms</p>
           </div>      
         </div>
-        <div class="row m-0 px-0 py-3">
-          <div class="col-lg-3 h6">host
-          </div>  
-          <div class="col-lg-3 h6">endpoint
-          </div>  
-          <div class="col-lg-1 h6">lookup
-          </div>  
-          <div class="col-lg-1 h6">socket
-          </div>  
-          <div class="col-lg-1 h6">conn.
-          </div>  
-          <div class="col-lg-1 h6">response
-          </div>      
-          <div class="col-lg-1 h6">total
-          </div>          
-          <div class="col-lg-1 h6">&nbsp;
-          </div>      
+        <div class="row m-0 px-0 py-0" style="max-height: 100%">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <% data.forEach(function (entry) { %> 
+                  <th scope="col" style=""><%=entry.host%>
+                  </th> 
+                  <% }) %>      
+              </tr>
+            </thead>
+            <tbody>
+              <% data.forEach(function (entry) { %>
+              <tr>
+                <th scope="col"><%=entry.host%></th>
+                <% entry.entries.forEach(function (value) { %>  
+                  <% if(value.endpoint == entry.host) { %>
+                    <td class="bg-secondary">&nbsp;
+                    </td>
+                    <% } else { %> 
+                  <td><%=value.timings.total%>
+                  </td> 
+                  <% } %>
+                <% }) %>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
         </div>
-        <% arr.forEach(function (entry) { %>
-        <div class="row m-0 px-0 py-3">
-          <div class="col-lg-3 h6"><%=entry.host%>
-          </div>  
-          <div class="col-lg-3 h6"><%=entry.endpoint%>
-          </div>  
-          <div class="col-lg-1 h6"><%=entry.lookup%>
-          </div>  
-          <div class="col-lg-1 h6"><%=entry.socket%>
-          </div>  
-          <div class="col-lg-1 h6"><%=entry.connect%>
-          </div>  
-          <div class="col-lg-1 h6"><%=entry.response%>
-          </div>      
-          <div class="col-lg-1 h6"><%=entry.end%>
-          </div>          
-          <div class="col-lg-1 h6">&nbsp;
-          </div>      
-        </div>
-        <% }) %>
       </div>
     </div>
   </body>

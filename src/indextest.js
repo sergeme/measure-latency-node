@@ -5,7 +5,7 @@ const url = require('url');
 const testData = require('./test');
 const helper = require('./helpers/helper');
 const rp = require('request-promise-native')
-const port = 3000;
+const port = 3001;
 
 const Data = function (host,entries) {
   this.host=host,
