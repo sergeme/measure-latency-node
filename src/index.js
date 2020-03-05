@@ -17,13 +17,11 @@ const hosts = [
 
 //Make sure to also copy this to views/index.ejs
 const hosts = [
-  'http://hag241:3000',
-  'http://hag241:3001',
+  'http://hag241:3000'
 ]
 
 const hostnames = [
-  'localhost',
-  'testhost'
+  'localhost'
 ]
 
 //Root route, entry point
