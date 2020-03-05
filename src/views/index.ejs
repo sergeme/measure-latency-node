@@ -19,14 +19,8 @@
             <div id="pingcontainer">
               <p>Current Ping Client - Servers:</p>
               <script>
-                const hosts = [
-                  'http://hag241:3000',
-                  'http://hag241:3001',
-                ]
-                const hostnames = [
-                  'localhost',
-                  'testhost'
-                ]
+                const hostnames =<%-JSON.stringify(hostnames)%>;
+                const hosts =<%-JSON.stringify(hosts)%>;
                 hostnames.forEach(function (host) {
                   var tag = document.createElement("span");
                   tag.setAttribute("id", `span${host}`)
@@ -58,7 +52,7 @@
               <tr>
                 <th scope="col"></th>
                 <% data.forEach(function (entry) { %> 
-                  <th scope="col" style=""><%=entry.host%>
+                  <th scope="col"><%=entry.host%>
                   </th> 
                   <% }) %>      
               </tr>

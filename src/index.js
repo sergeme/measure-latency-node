@@ -17,8 +17,13 @@ const hosts = [
 
 //Make sure to also copy this to views/index.ejs
 const hosts = [
-  'http://localhost:3000',
-  'http://localhost:3001',
+  'http://hag241:3000',
+  'http://hag241:3001',
+]
+
+const hostnames = [
+  'localhost',
+  'testhost'
 ]
 
 //Root route, entry point
@@ -34,7 +39,7 @@ app.get('/', async (req, res) =>{
       hostArr.push(tempObj)
     })
   }
-  res.render('index', {req: req, data: hostArr});  
+  res.render('index', {req: req, data: hostArr, hosts: hosts, hostnames: hostnames});  
 });
 
 app.get('/measure', async (req, res) =>{
