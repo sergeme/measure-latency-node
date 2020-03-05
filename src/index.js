@@ -1,30 +1,9 @@
 const {app, http} = require('./helpers/express')
 const io = require('socket.io')(http);
 const helper = require('./helpers/helper');
+const {hosts, hostnames} = require('./helpers/hosts');
 const rp = require('request-promise-native')
 require('dotenv').config()
-
-/*
-const hosts = [
- 'https://eu.test.sersch.me',
- 'https://usa.test.sersch.me',
- 'https://asia.test.sersch.me',
- 'https://aus.test.sersch.me',
- 'https://test.sersch.me',
-]
-
-*/
-
-//Make sure to also copy this to views/index.ejs
-const hosts = [
-  'http://wursttop:3000',
-  'http://wursttop:3001'
-]
-
-const hostnames = [
-  'localhost',
-  'testhost'
-]
 
 //Root route, entry point
 app.get('/', async (req, res) =>{
