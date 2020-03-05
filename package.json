@@ -5,7 +5,8 @@
   "repository": "https://github.com/sergeme/measure-latency-node",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/index.js",
+    "start2": "nodemon -r dotenv/config src/index.js dotenv_config_path=2.env"
   },
   "author": "",
   "license": "ISC",
