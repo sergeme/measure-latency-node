@@ -12,20 +12,46 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      var socket = io();
-      const interval = setInterval(function() {
-        socket.emit('latency', Date.now(), function(startTime) {
+      const hosts = [
+        'http://localhost:3000',
+        'http://localhost:3001',
+      ]
+      const hostnames = [
+        'localhost',
+        'testhost'
+      ]
+      var sockets = []
+      hosts.forEach(function (host) {
+        sockets.push(io(host));
+      })
+      sockets.map(function (socket) {
+        setInterval(function() {
+        socket.emit('latency', Date.now(), function(startTime, host) {
           var latency = Date.now() - startTime;
-          document.getElementById("ping").innerHTML = latency;
+          document.getElementById(`span${host}`).innerHTML = `<b>${host}</b>: ${latency} ms `;
         });
-      }, 1000);
+      }, 5000);
+      })
+      
     </script>
     <div class="container pl-0 pr-0">
       <div class="card" style="margin-top: 3rem;">
         <div class="row m-0 px-0 py-3">
           <div class="col-lg-12">
-            <h1 class="entry-title h2">Measuring latency between hosts</h1>
-            <p>Current Ping Client - Server: <span id="ping">...</span>ms</p>
+            <div class="entry-title h2">Measuring latency between hosts</div>
+            <div id="pingcontainer">
+              <p>Current Ping Client - Servers:</p>
+              <script>
+                hostnames.forEach(function (host) {
+                  var tag = document.createElement("span");
+                  tag.setAttribute("id", `span${host}`)
+                  tag.innerHTML=`<b>${host}</b>: .. ms `;
+                  var parent = document.getElementById("pingcontainer");
+                  parent.appendChild(tag);
+                })
+              </script>
+                
+              </div>
           </div>      
         </div>
         <div class="row m-0 px-0 py-0" style="max-height: 100%">

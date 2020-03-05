@@ -1,32 +1,27 @@
 const {app, http} = require('./helpers/express')
-const {asyncForEach} = require('./helpers/asyncForEach')
 const io = require('socket.io')(http);
-const url = require('url');
-const testData = require('./test');
 const helper = require('./helpers/helper');
 const rp = require('request-promise-native')
-const port = 3000;
+require('dotenv').config()
 
-const Data = function (host,entries) {
-  this.host=host,
-  this.entries=entries
-  /*this.start=start,
-  this.wait=wait,
-  this.dns=dns,
-  this.tcp=tcp,
-  this.firstByte=firstByte,
-  this.download=download,
-  this.total=total*/
-}
+/*
+const hosts = [
+ 'https://eu.test.sersch.me',
+ 'https://usa.test.sersch.me',
+ 'https://asia.test.sersch.me',
+ 'https://aus.test.sersch.me',
+ 'https://test.sersch.me',
+]
 
-const host = `http://localhost:${port}`
+*/
+
+//Make sure to also copy this to views/index.ejs
 const hosts = [
   'http://localhost:3000',
   'http://localhost:3001',
-  'http://localhost:3002',
-  'http://localhost:3003'
 ]
-//Entrypoint
+
+//Root route, entry point
 app.get('/', async (req, res) =>{
   let hostArr = []
   for(var x=0;x<hosts.length;x++) {
@@ -39,12 +34,11 @@ app.get('/', async (req, res) =>{
       hostArr.push(tempObj)
     })
   }
-  console.log(hostArr)
   res.render('index', {req: req, data: hostArr});  
 });
 
 app.get('/measure', async (req, res) =>{
-  var reply = {host: host, entries: []}
+  var reply = {host: process.env.hostname, entries: []}
   for(var x=0;x<hosts.length;x++) {
     await rp({
       uri: `${hosts[x]}/test`,
@@ -55,7 +49,7 @@ app.get('/measure', async (req, res) =>{
     (err, resp) => {
       var date = new Date(resp.timingStart)
       var timing = {total: helper.roundDown(resp.timingPhases.total)}
-      var entry = {endpoint: hosts[x],timings: timing}
+      var entry = {endpoint: resp.body,timings: timing}
       reply.entries.push(entry)
         
         /*
@@ -70,19 +64,19 @@ app.get('/measure', async (req, res) =>{
   }
   res.send(JSON.stringify(reply));
 });
-
+//route for connection testing
 app.get('/test', async (req, res) =>{
-  res.send("pong");
+  res.send(process.env.hostname);
 });
 
 io.on('connection', function(socket){
   console.log('a user connected');
   
   socket.on('latency', function (startTime, callback) {
-    callback(startTime);
+    callback(startTime, process.env.hostname);
   }); 
 });
 
-http.listen(port, function(){
-  console.log(`listening on *:${port}`);
+http.listen(process.env.port, function(){
+  console.log(`listening on *:${(process.env.port)}`);
 });

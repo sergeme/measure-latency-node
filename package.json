@@ -1,19 +1,17 @@
 {
   "name": "measure-latency-node",
   "version": "1.0.0",
-  "description": "",
+  "description": "measures response times between different hosts running the app",
+  "repository": "https://github.com/sergeme/measure-latency-node",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/index.js",
-    "demo": "nodemon src/indextest.js",
-    "demo2": "nodemon src/indextest2.js",
-    "demo3": "nodemon src/indextest3.js"
+    "start": "nodemon src/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bufferutil": "^4.0.1",
+    "dotenv": "^8.2.0",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "nodemon": "^2.0.2",
