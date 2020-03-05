@@ -15,8 +15,13 @@ app.get('/', async (req, res) =>{
     }, 
     (err, resp) => {
       if(err==null) {
-        var tempObj = JSON.parse(resp.body)
-        hostArr.push(tempObj)
+        try {
+          var tempObj = JSON.parse(resp.body)
+          hostArr.push(tempObj)
+        }
+        catch (e) {
+        console.log(`${hosts[x]} node process not running`)
+        }
       }
     }).catch(function (err) {
       console.log(`${hosts[x]} no reply`)
@@ -36,20 +41,12 @@ app.get('/measure', async (req, res) =>{
     }, 
     (err, resp) => {
       if(err==null) {
-        var date = new Date(resp.timingStart)
         var timing = {total: helper.roundDown(resp.timingPhases.total)}
         var entry = {endpoint: resp.body,timings: timing}
         reply.entries.push(entry)
       }
-        
         /*
-        `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`,
-        helper.roundDown(resp.timingPhases.wait),
-        helper.roundDown(resp.timingPhases.dns),
-        helper.roundDown(resp.timingPhases.tcp),
-        helper.roundDown(resp.timingPhases.firstByte),
-        helper.roundDown(resp.timingPhases.download),
-        helper.roundDown(resp.timingPhases.total))*/
+        helper.roundDown(resp.timingPhases.wait), helper.roundDown(resp.timingPhases.dns), helper.roundDown(resp.timingPhases.tcp), helper.roundDown(resp.timingPhases.firstByte), helper.roundDown(resp.timingPhases.download), helper.roundDown(resp.timingPhases.total))*/
     }).catch(function (err) {
       console.log(`${hosts[x]} not running`)
   })
