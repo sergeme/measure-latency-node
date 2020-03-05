@@ -17,11 +17,13 @@ const hosts = [
 
 //Make sure to also copy this to views/index.ejs
 const hosts = [
-  'http://hag241:3000'
+  'http://wursttop:3000',
+  'http://wursttop:3001'
 ]
 
 const hostnames = [
-  'localhost'
+  'localhost',
+  'testhost'
 ]
 
 //Root route, entry point
@@ -33,13 +35,17 @@ app.get('/', async (req, res) =>{
       method: 'GET',
     }, 
     (err, resp) => {
-      var tempObj = JSON.parse(resp.body)
-      hostArr.push(tempObj)
-    })
+      if(err==null) {
+        var tempObj = JSON.parse(resp.body)
+        hostArr.push(tempObj)
+      }
+    }).catch(function (err) {
+      console.log(`${hosts[x]} no reply`)
+  })
   }
   res.render('index', {req: req, data: hostArr, hosts: hosts, hostnames: hostnames});  
 });
-
+//Measurement route
 app.get('/measure', async (req, res) =>{
   var reply = {host: process.env.hostname, entries: []}
   for(var x=0;x<hosts.length;x++) {
@@ -50,10 +56,12 @@ app.get('/measure', async (req, res) =>{
       json: true
     }, 
     (err, resp) => {
-      var date = new Date(resp.timingStart)
-      var timing = {total: helper.roundDown(resp.timingPhases.total)}
-      var entry = {endpoint: resp.body,timings: timing}
-      reply.entries.push(entry)
+      if(err==null) {
+        var date = new Date(resp.timingStart)
+        var timing = {total: helper.roundDown(resp.timingPhases.total)}
+        var entry = {endpoint: resp.body,timings: timing}
+        reply.entries.push(entry)
+      }
         
         /*
         `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`,
@@ -63,7 +71,9 @@ app.get('/measure', async (req, res) =>{
         helper.roundDown(resp.timingPhases.firstByte),
         helper.roundDown(resp.timingPhases.download),
         helper.roundDown(resp.timingPhases.total))*/
-    })
+    }).catch(function (err) {
+      console.log(`${hosts[x]} not running`)
+  })
   }
   res.send(JSON.stringify(reply));
 });
@@ -73,7 +83,6 @@ app.get('/test', async (req, res) =>{
 });
 
 io.on('connection', function(socket){
-  console.log('a user connected');
   
   socket.on('latency', function (startTime, callback) {
     callback(startTime, process.env.hostname);
