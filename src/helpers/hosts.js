@@ -1,11 +1,15 @@
 const hosts = [
-  'http://wursttop:3000',
-  'http://wursttop:3001'
+  'https://eu.test.sersch.me',
+  'https://usa.test.sersch.me',
+  'https://asia.test.sersch.me',
+  'https://aus.test.sersch.me'
 ]
 
 const hostnames = [
-  'localhost',
-  'testhost'
+  'eu',
+  'usa',
+  'asia',
+  'aus'
 ]
 
 module.exports = {
