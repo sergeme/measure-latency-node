@@ -6,7 +6,7 @@ const rp = require('request-promise-native')
 require('dotenv').config()
 
 //Root route, entry point
-app.get('/', async (req, res) =>{
+app.get('/view', async (req, res) =>{
   let hostArr = []
   for(var x=0;x<hosts.length;x++) {
     await rp({
