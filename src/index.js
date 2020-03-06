@@ -6,9 +6,9 @@ const rp = require('request-promise-native')
 require('dotenv').config()
 
 //Dummy route
-app.get('/'), async (req, res) => {
+app.get('/', async (req, res) => {
   res.send("foo");
-}
+});
 
 //Root route, entry point
 app.get('/view', async (req, res) =>{
@@ -34,6 +34,7 @@ app.get('/view', async (req, res) =>{
   }
   res.render('index', {req: req, data: hostArr, hosts: hosts, hostnames: hostnames});  
 });
+
 //Measurement route
 app.get('/measure', async (req, res) =>{
   var reply = {host: process.env.hostname, entries: []}
