@@ -41,12 +41,25 @@ app.get('/measure', async (req, res) =>{
     }, 
     (err, resp) => {
       if(err==null) {
-        var timing = {total: helper.roundDown(resp.timingPhases.total)}
+        var timing = {
+          wait: helper.roundDown(resp.timingPhases.wait), 
+          dns: helper.roundDown(resp.timingPhases.dns), 
+          tcp: helper.roundDown(resp.timingPhases.tcp), 
+          firstByte: helper.roundDown(resp.timingPhases.firstByte), 
+          download: helper.roundDown(resp.timingPhases.download), 
+          total: helper.roundDown(resp.timingPhases.total),
+          socket: helper.roundDown(resp.timings.socket),
+          lookup: helper.roundDown(resp.timings.lookup),
+          connect: helper.roundDown(resp.timings.connect),
+          response: helper.roundDown(resp.timings.response),
+          end: helper.roundDown(resp.timings.end)
+        }
+
         var entry = {endpoint: resp.body,timings: timing}
         reply.entries.push(entry)
       }
         /*
-        helper.roundDown(resp.timingPhases.wait), helper.roundDown(resp.timingPhases.dns), helper.roundDown(resp.timingPhases.tcp), helper.roundDown(resp.timingPhases.firstByte), helper.roundDown(resp.timingPhases.download), helper.roundDown(resp.timingPhases.total))*/
+        ))*/
     }).catch(function (err) {
       console.log(`${hosts[x]} not running`)
   })
@@ -59,8 +72,8 @@ app.get('/test', async (req, res) =>{
 });
 
 io.on('connection', function(socket){
-  
   socket.on('latency', function (startTime, callback) {
+    console.log("io event emitted by client")
     callback(startTime, process.env.hostname);
   }); 
 });
