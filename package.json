@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/index.js",
-    "start2": "nodemon -r dotenv/config src/index.js dotenv_config_path=2.env"
+    "start2": "nodemon -r dotenv/config src/index.js dotenv_config_path=2.env",
+    "start3": "nodemon -r dotenv/config src/index.js dotenv_config_path=3.env",
+    "start4": "nodemon -r dotenv/config src/index.js dotenv_config_path=4.env"
   },
   "author": "",
   "license": "ISC",

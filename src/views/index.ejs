@@ -41,41 +41,29 @@
                   });
                 }, 5000);
                 })
-                
               </script>
             </div>
           </div>      
         </div>
-        <div class="row m-0 px-0 py-0" style="max-height: 100%">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th scope="col"></th>
-                <% data.forEach(function (entry) { %> 
-                  <th scope="col"><%=entry.host%>
-                  </th> 
-                  <% }) %>      
-              </tr>
-            </thead>
-            <tbody>
-              <% data.forEach(function (entry) { %>
-              <tr>
-                <th scope="col"><%=entry.host%></th>
+        <div class="row mx-3 p-0" style="max-height: 100%">
+          <div class="col-lg-2 m-0 p-1">&nbsp;</div>
+            <% data.forEach(function (entry) { %> 
+              <div class="col-lg-2 m-0 p-1 bg-primary text-center text-light"><%=entry.host%></div>
+            <% }) %>      
+        </div>
+        <% data.forEach(function (entry) { %>
+          <div class="row mx-3 p-0" style="max-height: 100%">
+            <div class="col-lg-2 m-0 p-1 bg-primary text-center text-light font-weight-bold"><%=entry.host%></div>
                 <% entry.entries.forEach(function (value) { %>  
                   <% if(value.endpoint == entry.host) { %>
-                    <td class="bg-secondary">&nbsp;
-                    </td>
+                    <div class="col-lg-2 m-0 p-1 bg-dark">&nbsp;</div>
                     <% } else { %> 
-                  <td><%=value.timings.total%>
-                  </td> 
+                      <div class="col-lg-2 m-0 p-1 text-center"><%=value.timings.total%> ms</div>
                   <% } %>
                 <% }) %>
-              </tr>
+          </div>
               <% }) %>
-            </tbody>
-          </table>
         </div>
-      </div>
     </div>
   </body>
 </html>
