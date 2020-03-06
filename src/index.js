@@ -5,6 +5,11 @@ const {hosts, hostnames} = require('./helpers/hosts');
 const rp = require('request-promise-native')
 require('dotenv').config()
 
+//Dummy route
+app.get('/'), async (req, res) => {
+  res.send("foo");
+}
+
 //Root route, entry point
 app.get('/view', async (req, res) =>{
   let hostArr = []
