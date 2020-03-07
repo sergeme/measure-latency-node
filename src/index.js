@@ -13,7 +13,6 @@ app.get('/', async (req, res) => {
 //Root route, entry point
 app.get('/view', async (req, res) =>{
   let hostArr = await foo(hosts)
-  console.log(req);
   res.render('index', {req: req, data: hostArr, currenthost: process.env.hostname, hosts: hosts, hostnames: hostnames});  
 });
 
