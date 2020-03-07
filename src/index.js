@@ -4,7 +4,7 @@ const {roundDown, foo, dummyReply} = require('./helpers/helper');
 const {hosts, hostnames} = require('./helpers/hosts');
 const rp = require('request-promise-native')
 require('dotenv').config()
-const dummyHostArr = dummyReply(hosts)
+const dummyHostArr = dummyReply(hostnames)
 
 
 //Dummy route
@@ -14,7 +14,6 @@ app.get('/', async (req, res) => {
 
 //Root route, entry point
 app.get('/view', async (req, res) =>{
-  let hostArr = await foo(hosts)
   res.render('index', {req: req, data: dummyHostArr, currenthost: process.env.hostname, hosts: hosts, hostnames: hostnames});  
 });
 
@@ -63,12 +62,10 @@ app.get('/test', async (req, res) =>{
 
 io.on('connection', function(socket){
   socket.on('latency', function (startTime, callback) {
-    console.log("latency event emitted by client")
     callback(startTime, process.env.hostname);
   }); 
 
   socket.on('newconnection', async function (callback) {
-    console.log("connection event emitted by client")
     let hostArr = await foo(hosts)
     callback(hostArr);
   }); 
