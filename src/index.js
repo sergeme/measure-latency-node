@@ -1,9 +1,11 @@
 const {app, http} = require('./helpers/express')
 const io = require('socket.io')(http);
-const {roundDown, foo} = require('./helpers/helper');
+const {roundDown, foo, dummyReply} = require('./helpers/helper');
 const {hosts, hostnames} = require('./helpers/hosts');
 const rp = require('request-promise-native')
 require('dotenv').config()
+const dummyHostArr = dummyReply(hosts)
+
 
 //Dummy route
 app.get('/', async (req, res) => {
@@ -13,7 +15,7 @@ app.get('/', async (req, res) => {
 //Root route, entry point
 app.get('/view', async (req, res) =>{
   let hostArr = await foo(hosts)
-  res.render('index', {req: req, data: hostArr, currenthost: process.env.hostname, hosts: hosts, hostnames: hostnames});  
+  res.render('index', {req: req, data: dummyHostArr, currenthost: process.env.hostname, hosts: hosts, hostnames: hostnames});  
 });
 
 //Measurement route
