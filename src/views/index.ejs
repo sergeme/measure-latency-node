@@ -19,6 +19,9 @@
             <div id="pingcontainer">
               <p>Current Ping Client - Servers:</p>
               <script>
+                $(function () {
+                  $('[data-toggle="tooltip"]').tooltip()
+                })
                 const hostnames =<%-JSON.stringify(hostnames)%>;
                 const hosts =<%-JSON.stringify(hosts)%>;
                 hostnames.forEach(function (host) {
@@ -58,7 +61,23 @@
                   <% if(value.endpoint == entry.host) { %>
                     <div class="col-lg-2 m-0 p-1 bg-dark">&nbsp;</div>
                     <% } else { %> 
-                      <div class="col-lg-2 m-0 p-1 text-center"><%=value.timings.total%> ms</div>
+                      <div class="col-lg-2 m-0 p-1 text-center">
+                        <span data-toggle="tooltip" data-html="true" title="
+                        <b>timing phases:</b><br/>
+                          wait: <b><%=value.timings.wait%> ms</b><br/>
+                          dns: <b><%=value.timings.dns%> ms</b><br/>
+                          tcp: <b><%=value.timings.tcp%> ms</b><br/>
+                          firstbyte: <b><%=value.timings.firstbyte%> ms</b><br/>
+                          download: <b><%=value.timings.download%> ms</b><br/>
+                          total: <b><%=value.timings.total%> ms</b><br/>
+                        <b>timings:</b><br/>
+                          socket: <b><%=value.timings.socket%> ms</b><br/>
+                          lookup: <b><%=value.timings.lookup%> ms</b><br/>
+                          connect: <b><%=value.timings.connect%> ms</b><br/>
+                          response: <b><%=value.timings.response%> ms</b><br/>
+                          end: <b><%=value.timings.total%> ms</b><br/>
+                        "><%=value.timings.total%> ms</span>
+                      </div>
                   <% } %>
                 <% }) %>
           </div>

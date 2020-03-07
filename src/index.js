@@ -47,6 +47,10 @@ app.get('/measure', async (req, res) =>{
     }, 
     (err, resp) => {
       if(err==null) {
+        console.log("timingphases");
+        console.log(resp.timingPhases);
+        console.log("timings");
+        console.log(resp.timings);
         var timing = {
           wait: helper.roundDown(resp.timingPhases.wait), 
           dns: helper.roundDown(resp.timingPhases.dns), 
