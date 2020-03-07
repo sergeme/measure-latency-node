@@ -12,7 +12,7 @@ const hostnames = [
   'aus'
 ]
 
-const hosts = [
+/*const hosts = [
   'http://localhost:3000',
   'http://localhost:3001'
 ]
@@ -20,7 +20,7 @@ const hosts = [
 const hostnames = [
   'localhost',
   'testhost'
-]
+]*/
 
 module.exports = {
   hosts, hostnames
