@@ -106,4 +106,3 @@ dist
 # dotenv
 .env
 2.env
-hosts.js
