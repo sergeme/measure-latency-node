@@ -27,7 +27,20 @@ const foo = async (hosts) => {
   return hostArr;
 }
 
+const dummyReply = function (hosts) {
+  let hostArr = []
+  for(var x=0;x<hosts.length;x++) {
+    var reply = {host: hosts[x], entries: []}
+    for(var y=0;y<hosts.length;y++) {
+      var entry = {endpoint: hosts[y]}
+      reply.entries.push(entry)
+    }
+    hostArr.push(reply);
+  }
+  return hostArr;
+}
+
 
 module.exports = {
-  roundDown, foo
+  roundDown, foo, dummyReply
 }
