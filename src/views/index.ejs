@@ -17,6 +17,7 @@
           <div class="col-lg-12">
             <div class="entry-title h2">Measuring latency between hosts</div>
             <div id="pingcontainer">
+              <p>Connected to Host <b><%=currenthost%></b></p>
               <p>Current Ping Client - Servers:</p>
               <script>
                 $(function () {
@@ -38,12 +39,38 @@
                 })
                 sockets.map(function (socket) {
                   setInterval(function() {
-                  socket.emit('latency', Date.now(), function(startTime, host) {
-                    var latency = Date.now() - startTime;
-                    document.getElementById(`span${host}`).innerHTML = `<b>${host}</b>: ${latency} ms `;
-                  });
-                }, 5000);
+                    socket.emit('latency', Date.now(), function(startTime, host) {
+                      var latency = Date.now() - startTime;
+                      document.getElementById(`span${host}`).innerHTML = `<b>${host}</b>: ${latency} ms `;
+                    });
+                  }, 5000);
                 })
+                var socket = io();
+                setInterval(function() {
+                  socket.emit('newconnection', function(hostArr) {
+                    console.log(hostArr);
+                    hostArr.forEach(function (entry) {
+                      entry.entries.forEach(function (value) {
+                        var content = document.getElementById(`${entry.host}-${value.endpoint}`);
+                        content.setAttribute("data-original-title", `                        
+                        <div class='text-left'><b>timing phases:</b><br/>
+                          wait: <b>${value.timings.wait} ms</b><br/>
+                          dns: <b>${value.timings.dns} ms</b><br/>
+                          tcp: <b>${value.timings.tcp} ms</b><br/>
+                          firstbyte: <b>${value.timings.firstByte} ms</b><br/>
+                          download: <b>${value.timings.download} ms</b><br/>
+                          total: <b>${value.timings.total} ms</b><br/><br/>
+                        <b>timings:</b><br/>
+                          socket: <b>${value.timings.socket} ms</b><br/>
+                          lookup: <b>${value.timings.lookup} ms</b><br/>
+                          connect: <b>${value.timings.connect} ms</b><br/>
+                          response: <b>${value.timings.response} ms</b><br/>
+                          end: <b>${value.timings.end} ms</b><br/></div>`)
+                          content.innerHTML = `<b>${value.timings.end} ms</b>`;
+                      })
+                    })
+                  })
+                }, 10000);
               </script>
             </div>
           </div>      
@@ -59,25 +86,13 @@
             <div class="col-lg-2 m-0 p-1 bg-primary text-center text-light font-weight-bold"><%=entry.host%></div>
                 <% entry.entries.forEach(function (value) { %>  
                   <% if(value.endpoint == entry.host) { %>
-                    <div class="col-lg-2 m-0 p-1 bg-dark">&nbsp;</div>
-                    <% } else { %> 
-                      <div class="col-lg-2 m-0 p-1 text-center">
-                        <span data-toggle="tooltip" data-html="true" title="
-                        <b>timing phases:</b><br/>
-                          wait: <b><%=value.timings.wait%> ms</b><br/>
-                          dns: <b><%=value.timings.dns%> ms</b><br/>
-                          tcp: <b><%=value.timings.tcp%> ms</b><br/>
-                          firstbyte: <b><%=value.timings.firstbyte%> ms</b><br/>
-                          download: <b><%=value.timings.download%> ms</b><br/>
-                          total: <b><%=value.timings.total%> ms</b><br/>
-                        <b>timings:</b><br/>
-                          socket: <b><%=value.timings.socket%> ms</b><br/>
-                          lookup: <b><%=value.timings.lookup%> ms</b><br/>
-                          connect: <b><%=value.timings.connect%> ms</b><br/>
-                          response: <b><%=value.timings.response%> ms</b><br/>
-                          end: <b><%=value.timings.total%> ms</b><br/>
-                        "><%=value.timings.total%> ms</span>
-                      </div>
+                    <div class="col-lg-2 m-0 p-1 bg-dark text-center text-light">
+                      <span data-toggle="tooltip" data-html="true" id="<%=entry.host%>-<%=value.endpoint%>" title="<b>data incoming...</b>">...</span>
+                    </div>
+                  <% } else { %> 
+                    <div class="col-lg-2 m-0 p-1 text-center">
+                      <span data-toggle="tooltip" data-html="true" id="<%=entry.host%>-<%=value.endpoint%>" title="<b>data incoming...</b>">...</span>
+                    </div>
                   <% } %>
                 <% }) %>
           </div>

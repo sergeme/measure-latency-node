@@ -1,6 +1,6 @@
 const {app, http} = require('./helpers/express')
 const io = require('socket.io')(http);
-const helper = require('./helpers/helper');
+const {roundDown, foo} = require('./helpers/helper');
 const {hosts, hostnames} = require('./helpers/hosts');
 const rp = require('request-promise-native')
 require('dotenv').config()
@@ -12,27 +12,9 @@ app.get('/', async (req, res) => {
 
 //Root route, entry point
 app.get('/view', async (req, res) =>{
-  let hostArr = []
-  for(var x=0;x<hosts.length;x++) {
-    await rp({
-      uri: `${hosts[x]}/measure`,
-      method: 'GET',
-    }, 
-    (err, resp) => {
-      if(err==null) {
-        try {
-          var tempObj = JSON.parse(resp.body)
-          hostArr.push(tempObj)
-        }
-        catch (e) {
-        console.log(`${hosts[x]} node process not running`)
-        }
-      }
-    }).catch(function (err) {
-      console.log(`${hosts[x]} no reply`)
-  })
-  }
-  res.render('index', {req: req, data: hostArr, hosts: hosts, hostnames: hostnames});  
+  let hostArr = await foo(hosts)
+  console.log(req);
+  res.render('index', {req: req, data: hostArr, currenthost: process.env.hostname, hosts: hosts, hostnames: hostnames});  
 });
 
 //Measurement route
@@ -47,21 +29,19 @@ app.get('/measure', async (req, res) =>{
     }, 
     (err, resp) => {
       if(err==null) {
-        console.log("response");
-        console.log(resp);
 
         var timing = {
-          wait: helper.roundDown(resp.timingPhases.wait), 
-          dns: helper.roundDown(resp.timingPhases.dns), 
-          tcp: helper.roundDown(resp.timingPhases.tcp), 
-          firstByte: helper.roundDown(resp.timingPhases.firstByte), 
-          download: helper.roundDown(resp.timingPhases.download), 
-          total: helper.roundDown(resp.timingPhases.total),
-          socket: helper.roundDown(resp.timings.socket),
-          lookup: helper.roundDown(resp.timings.lookup),
-          connect: helper.roundDown(resp.timings.connect),
-          response: helper.roundDown(resp.timings.response),
-          end: helper.roundDown(resp.timings.end)
+          wait: roundDown(resp.timingPhases.wait), 
+          dns: roundDown(resp.timingPhases.dns), 
+          tcp: roundDown(resp.timingPhases.tcp), 
+          firstByte: roundDown(resp.timingPhases.firstByte), 
+          download: roundDown(resp.timingPhases.download), 
+          total: roundDown(resp.timingPhases.total),
+          socket: roundDown(resp.timings.socket),
+          lookup: roundDown(resp.timings.lookup),
+          connect: roundDown(resp.timings.connect),
+          response: roundDown(resp.timings.response),
+          end: roundDown(resp.timings.end)
         }
 
         var entry = {endpoint: resp.body,timings: timing}
@@ -82,8 +62,14 @@ app.get('/test', async (req, res) =>{
 
 io.on('connection', function(socket){
   socket.on('latency', function (startTime, callback) {
-    console.log("io event emitted by client")
+    console.log("latency event emitted by client")
     callback(startTime, process.env.hostname);
+  }); 
+
+  socket.on('newconnection', async function (callback) {
+    console.log("connection event emitted by client")
+    let hostArr = await foo(hosts)
+    callback(hostArr);
   }); 
 });
 
