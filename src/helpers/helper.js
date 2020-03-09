@@ -12,7 +12,6 @@ const roundDown = (num) => {
 }
 
 const connectToHost = async (hosts) => {
-  const now = Date.now();
   var reply = {host: process.env.hostname, entries: []}
   const promises = hosts.map(async function (host, index, array) {
     try {
@@ -38,7 +37,6 @@ const connectToHost = async (hosts) => {
   })
   const results = await Promise.all(promises)
   reply.entries = results;
-  console.log(Date.now()-now)
   return JSON.stringify(reply)
 }
 
