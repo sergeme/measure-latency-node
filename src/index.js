@@ -20,13 +20,15 @@ app.get('/view', async (req, res) =>{
 
 //Measurement route - connects to all configured hosts and requests /test
 app.get('/measure', async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   const reply = await connectToHost(hosts);
-  res.send(JSON.stringify(reply));
+  res.send(reply);
 });
 
 //route for connection testing - returns configured shorthand hostname
 app.get('/test', async (req, res) =>{
-  res.send(process.env.hostname);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(process.env.hostname));
 });
 
 //event listener for client/server connection
@@ -37,8 +39,8 @@ io.on('connection', function(socket){
   }); 
   //server requests /measure on all hosts once this event gets triggered, sends data in callback
   socket.on('newconnection', async function (callback) {
-    let hostArr = await measureHosts(hosts)
-    callback(hostArr);
+    let hostArr = await connectToHost(hosts)
+    callback(JSON.parse(hostArr));
   }); 
 });
 

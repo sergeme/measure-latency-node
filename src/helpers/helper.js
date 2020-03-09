@@ -24,14 +24,14 @@ const measureHosts = async (hosts) => {
       console.log(error)
     }
   }
-  return hostArr;
+  return JSON.stringify(hostArr);
 }
 
 const connectToHost = async (hosts) => {
   var reply = {host: process.env.hostname, entries: []}
   for(var x=0;x<hosts.length;x++) {
     try {
-    const resp = await got('test',{prefixUrl: `${hosts[x]}`, timings: true});
+    const resp = await got('test',{prefixUrl: `${hosts[x]}`, timings: true, JSON: true});
     var timing = {
       wait: roundDown(resp.timings.phases.wait), 
       dns: roundDown(resp.timings.phases.dns), 
@@ -42,14 +42,14 @@ const connectToHost = async (hosts) => {
       download: roundDown(resp.timings.phases.download), 
       total: roundDown(resp.timings.phases.total)
     }
-    var entry = {endpoint: resp.body,timings: timing}
+    var entry = {endpoint: JSON.parse(resp.body),timings: timing}
     reply.entries.push(entry)
       
     } catch (error) {
       console.log(`${hosts[x]} not running`)
     }
   }
-  return reply;
+  return JSON.stringify(reply);
 }
 
 //creates a dummy object, required for building ejs template
