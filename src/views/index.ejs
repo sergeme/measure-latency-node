@@ -23,19 +23,18 @@
                 $(function () {
                   $('[data-toggle="tooltip"]').tooltip()
                 })
-                const hostnames =<%-JSON.stringify(hostnames)%>;
                 const hosts =<%-JSON.stringify(hosts)%>;
-                hostnames.forEach(function (host) {
+                hosts.forEach(function (host) {
                   var tag = document.createElement("span");
-                  tag.setAttribute("id", `span${host}`)
-                  tag.innerHTML=`<b>${host}</b>: .. ms `;
+                  tag.setAttribute("id", `span${host.name}`)
+                  tag.innerHTML=`<b>${host.name}</b>: .. ms `;
                   var parent = document.getElementById("pingcontainer");
                   parent.appendChild(tag);
                 })
                 
                 var sockets = []
                 hosts.forEach(function (host) {
-                  sockets.push(io(host));
+                  sockets.push(io(host.fqdn));
                 })
                 sockets.map(function (socket) {
                   setInterval(function() {

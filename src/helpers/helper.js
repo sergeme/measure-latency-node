@@ -13,38 +13,40 @@ const roundDown = (num) => {
 
 const connectToHost = async (hosts) => {
   var reply = {host: process.env.hostname, entries: []}
-  const now = Date.now()
-  for(var x=0;x<hosts.length;x++) {
+  const promises = hosts.map(async function (host) {
     try {
-    const resp = await got('test',{prefixUrl: `${hosts[x]}`, timings: true, JSON: true});
-    var timing = {
-      wait: roundDown(resp.timings.phases.wait), 
-      dns: roundDown(resp.timings.phases.dns), 
-      tcp: roundDown(resp.timings.phases.tcp), 
-      tls: roundDown(resp.timings.phases.tls),
-      request: roundDown(resp.timings.phases),
-      firstByte: roundDown(resp.timings.phases.firstByte), 
-      download: roundDown(resp.timings.phases.download), 
-      total: roundDown(resp.timings.phases.total)
+      const resp = await got('measure',{prefixUrl: `${host.fqdn}`, timings: true, JSON: true})
+      return {
+        endpoint: JSON.parse(resp.body),
+        timings: {
+          wait: roundDown(resp.timings.phases.wait), 
+          dns: roundDown(resp.timings.phases.dns), 
+          tcp: roundDown(resp.timings.phases.tcp), 
+          tls: roundDown(resp.timings.phases.tls),
+          request: roundDown(resp.timings.phases),
+          firstByte: roundDown(resp.timings.phases.firstByte), 
+          download: roundDown(resp.timings.phases.download), 
+          total: roundDown(resp.timings.phases.total)
+        }
+      }
+    } 
+    catch (error) {
+      console.log(`${host.name} not running`)
+      console.log(error)
     }
-    var entry = {endpoint: JSON.parse(resp.body),timings: timing}
-    reply.entries.push(entry)
-      
-    } catch (error) {
-      console.log(`${hosts[x]} not running`)
-    }
-  }
-  console.log(Date.now()-now)
-  return JSON.stringify(reply);
+  })
+  const results = await Promise.all(promises)
+  reply.entries = results;
+  return JSON.stringify(reply)
 }
 
 //creates a dummy object, required for building ejs template
 const dummyReply = function (hosts) {
   let hostArr = []
   for(var x=0;x<hosts.length;x++) {
-    var reply = {host: hosts[x], entries: []}
+    var reply = {host: hosts[x].name, entries: []}
     for(var y=0;y<hosts.length;y++) {
-      var entry = {endpoint: hosts[y]}
+      var entry = {endpoint: hosts[y].name}
       reply.entries.push(entry)
     }
     hostArr.push(reply);
