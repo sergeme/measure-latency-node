@@ -1,11 +1,12 @@
-const {app, http} = require('./helpers/express')
-const io = require('socket.io')(http);
-const {roundDown, foo, dummyReply} = require('./helpers/helper');
-const {hosts, hostnames} = require('./helpers/hosts');
-const rp = require('request-promise-native')
 require('dotenv').config()
+//express server config
+const {app, http} = require('./helpers/express')
+//socket.io running on http instance
+const io = require('socket.io')(http);
+//application logic etc
+const {connectToHost, measureHosts, dummyReply} = require('./helpers/helper');
+const {hosts, hostnames} = require('./helpers/hosts');
 const dummyHostArr = dummyReply(hostnames)
-
 
 //Dummy route
 app.get('/', async (req, res) => {
@@ -17,56 +18,26 @@ app.get('/view', async (req, res) =>{
   res.render('index', {req: req, data: dummyHostArr, currenthost: process.env.hostname, hosts: hosts, hostnames: hostnames});  
 });
 
-//Measurement route
-app.get('/measure', async (req, res) =>{
-  var reply = {host: process.env.hostname, entries: []}
-  for(var x=0;x<hosts.length;x++) {
-    await rp({
-      uri: `${hosts[x]}/test`,
-      method: 'GET',
-      time: true,
-      json: true
-    }, 
-    (err, resp) => {
-      if(err==null) {
-
-        var timing = {
-          wait: roundDown(resp.timingPhases.wait), 
-          dns: roundDown(resp.timingPhases.dns), 
-          tcp: roundDown(resp.timingPhases.tcp), 
-          firstByte: roundDown(resp.timingPhases.firstByte), 
-          download: roundDown(resp.timingPhases.download), 
-          total: roundDown(resp.timingPhases.total),
-          socket: roundDown(resp.timings.socket),
-          lookup: roundDown(resp.timings.lookup),
-          connect: roundDown(resp.timings.connect),
-          response: roundDown(resp.timings.response),
-          end: roundDown(resp.timings.end)
-        }
-
-        var entry = {endpoint: resp.body,timings: timing}
-        reply.entries.push(entry)
-      }
-        /*
-        ))*/
-    }).catch(function (err) {
-      console.log(`${hosts[x]} not running`)
-  })
-  }
+//Measurement route - connects to all configured hosts and requests /test
+app.get('/measure', async (req, res) => {
+  const reply = await connectToHost(hosts);
   res.send(JSON.stringify(reply));
 });
-//route for connection testing
+
+//route for connection testing - returns configured shorthand hostname
 app.get('/test', async (req, res) =>{
   res.send(process.env.hostname);
 });
 
+//event listener for client/server connection
 io.on('connection', function(socket){
+  //server respons to latency event with timestamp submitted by client
   socket.on('latency', function (startTime, callback) {
     callback(startTime, process.env.hostname);
   }); 
-
+  //server requests /measure on all hosts once this event gets triggered, sends data in callback
   socket.on('newconnection', async function (callback) {
-    let hostArr = await foo(hosts)
+    let hostArr = await measureHosts(hosts)
     callback(hostArr);
   }); 
 });

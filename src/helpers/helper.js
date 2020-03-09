@@ -1,32 +1,58 @@
-const rp = require('request-promise-native')
+//got.js http request module
+const got = require('got')
+
+//replaces "0" with "<1"
 const roundDown = (num) => {
-  return Math.round((num + Number.EPSILON) * 100) / 100
+  if(num == 0) {
+    return "<1";
+  }
+  else {
+    return num;
+  }
 }
 
-const foo = async (hosts) => {
+const measureHosts = async (hosts) => {
   let hostArr = []
   for(var x=0;x<hosts.length;x++) {
-    await rp({
-      uri: `${hosts[x]}/measure`,
-      method: 'GET',
-    }, 
-    (err, resp) => {
-      if(err==null) {
-        try {
-          var tempObj = JSON.parse(resp.body)
-          hostArr.push(tempObj)
-        }
-        catch (e) {
-        console.log(`${hosts[x]} node process not running`)
-        }
-      }
-    }).catch(function (err) {
-      console.log(`${hosts[x]} no reply`)
-    })
+    try {
+      const resp = await got('measure',{prefixUrl: `${hosts[x]}`}); 
+      var tempObj = JSON.parse(resp.body)
+      hostArr.push(tempObj)
+    }
+    catch (error) {
+      console.log(`${hosts[x]} node process not running`)
+      console.log(error)
+    }
   }
   return hostArr;
 }
 
+const connectToHost = async (hosts) => {
+  var reply = {host: process.env.hostname, entries: []}
+  for(var x=0;x<hosts.length;x++) {
+    try {
+    const resp = await got('test',{prefixUrl: `${hosts[x]}`, timings: true});
+    var timing = {
+      wait: roundDown(resp.timings.phases.wait), 
+      dns: roundDown(resp.timings.phases.dns), 
+      tcp: roundDown(resp.timings.phases.tcp), 
+      tls: roundDown(resp.timings.phases.tls),
+      request: roundDown(resp.timings.phases),
+      firstByte: roundDown(resp.timings.phases.firstByte), 
+      download: roundDown(resp.timings.phases.download), 
+      total: roundDown(resp.timings.phases.total)
+    }
+    var entry = {endpoint: resp.body,timings: timing}
+    reply.entries.push(entry)
+      
+    } catch (error) {
+      console.log(`${hosts[x]} not running`)
+    }
+  }
+  return reply;
+}
+
+//creates a dummy object, required for building ejs template
 const dummyReply = function (hosts) {
   let hostArr = []
   for(var x=0;x<hosts.length;x++) {
@@ -42,5 +68,5 @@ const dummyReply = function (hosts) {
 
 
 module.exports = {
-  roundDown, foo, dummyReply
+  roundDown, measureHosts, connectToHost, dummyReply
 }
