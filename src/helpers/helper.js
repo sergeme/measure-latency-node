@@ -31,7 +31,7 @@ const connectToHost = async (hosts) => {
       }
     } 
     catch (error) {
-      console.log(`${host.name} not running`)
+      console.log(`${host.name} not running: ${error.name}`)
       console.log(error)
     }
   })
