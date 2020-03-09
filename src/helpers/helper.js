@@ -32,12 +32,11 @@ const connectToHost = async (hosts) => {
     } 
     catch (error) {
         console.log(`${host} not running`)
-    }
-    
+    }  
   })
   const results = await Promise.all(promises)
   reply.entries = results;
-  return JSON.stringify(reply)
+  return JSON.stringify(reply);
 }
 
 //creates a dummy object, required for building ejs template
