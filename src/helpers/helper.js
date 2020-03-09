@@ -13,29 +13,28 @@ const roundDown = (num) => {
 
 const connectToHost = async (hosts) => {
   var reply = {host: process.env.hostname, entries: []}
-  const promises = hosts.map(async function (host, index, array) {
+  const now = Date.now()
+  for(var x=0;x<hosts.length;x++) {
     try {
-      const resp = await got('measure',{prefixUrl: `${host}`, timings: true, JSON: true})
-      return {
-        endpoint: JSON.parse(resp.body),
-        timings: {
-          wait: roundDown(resp.timings.phases.wait), 
-          dns: roundDown(resp.timings.phases.dns), 
-          tcp: roundDown(resp.timings.phases.tcp), 
-          tls: roundDown(resp.timings.phases.tls),
-          request: roundDown(resp.timings.phases),
-          firstByte: roundDown(resp.timings.phases.firstByte), 
-          download: roundDown(resp.timings.phases.download), 
-          total: roundDown(resp.timings.phases.total)
-        }
-      }
-    } 
-    catch (error) {
-        console.log(`${host} not running`)
-    }  
-  })
-  const results = await Promise.all(promises)
-  reply.entries = results;
+    const resp = await got('test',{prefixUrl: `${hosts[x]}`, timings: true, JSON: true});
+    var timing = {
+      wait: roundDown(resp.timings.phases.wait), 
+      dns: roundDown(resp.timings.phases.dns), 
+      tcp: roundDown(resp.timings.phases.tcp), 
+      tls: roundDown(resp.timings.phases.tls),
+      request: roundDown(resp.timings.phases),
+      firstByte: roundDown(resp.timings.phases.firstByte), 
+      download: roundDown(resp.timings.phases.download), 
+      total: roundDown(resp.timings.phases.total)
+    }
+    var entry = {endpoint: JSON.parse(resp.body),timings: timing}
+    reply.entries.push(entry)
+      
+    } catch (error) {
+      console.log(`${hosts[x]} not running`)
+    }
+  }
+  console.log(Date.now()-now)
   return JSON.stringify(reply);
 }
 
