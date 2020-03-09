@@ -11,24 +11,9 @@ const roundDown = (num) => {
   }
 }
 
-const measureHosts = async (hosts) => {
-  let hostArr = []
-  for(var x=0;x<hosts.length;x++) {
-    try {
-      const resp = await got('measure',{prefixUrl: `${hosts[x]}`}); 
-      var tempObj = JSON.parse(resp.body)
-      hostArr.push(tempObj)
-    }
-    catch (error) {
-      console.log(`${hosts[x]} node process not running`)
-      console.log(error)
-    }
-  }
-  return JSON.stringify(hostArr);
-}
-
 const connectToHost = async (hosts) => {
   var reply = {host: process.env.hostname, entries: []}
+  const now = Date.now()
   for(var x=0;x<hosts.length;x++) {
     try {
     const resp = await got('test',{prefixUrl: `${hosts[x]}`, timings: true, JSON: true});
@@ -49,6 +34,7 @@ const connectToHost = async (hosts) => {
       console.log(`${hosts[x]} not running`)
     }
   }
+  console.log(Date.now()-now)
   return JSON.stringify(reply);
 }
 
@@ -68,5 +54,5 @@ const dummyReply = function (hosts) {
 
 
 module.exports = {
-  roundDown, measureHosts, connectToHost, dummyReply
+  roundDown, connectToHost, dummyReply
 }
