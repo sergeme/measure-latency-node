@@ -28,28 +28,33 @@ const measureHosts = async (hosts) => {
 }
 
 const connectToHost = async (hosts) => {
+  const now = Date.now();
   var reply = {host: process.env.hostname, entries: []}
-  for(var x=0;x<hosts.length;x++) {
+  const promises = hosts.map(async function (host, index, array) {
     try {
-    const resp = await got('test',{prefixUrl: `${hosts[x]}`, timings: true, JSON: true});
-    var timing = {
-      wait: roundDown(resp.timings.phases.wait), 
-      dns: roundDown(resp.timings.phases.dns), 
-      tcp: roundDown(resp.timings.phases.tcp), 
-      tls: roundDown(resp.timings.phases.tls),
-      request: roundDown(resp.timings.phases),
-      firstByte: roundDown(resp.timings.phases.firstByte), 
-      download: roundDown(resp.timings.phases.download), 
-      total: roundDown(resp.timings.phases.total)
+      const resp = await got('test',{prefixUrl: `${host}`, timings: true, JSON: true})
+      return {
+        endpoint: JSON.parse(resp.body),
+        timings: {
+          wait: roundDown(resp.timings.phases.wait), 
+          dns: roundDown(resp.timings.phases.dns), 
+          tcp: roundDown(resp.timings.phases.tcp), 
+          tls: roundDown(resp.timings.phases.tls),
+          request: roundDown(resp.timings.phases),
+          firstByte: roundDown(resp.timings.phases.firstByte), 
+          download: roundDown(resp.timings.phases.download), 
+          total: roundDown(resp.timings.phases.total)
+        }
+      }
+    } 
+    catch (error) {
+        console.log(`${host} not running`)
     }
-    var entry = {endpoint: JSON.parse(resp.body),timings: timing}
-    reply.entries.push(entry)
-      
-    } catch (error) {
-      console.log(`${hosts[x]} not running`)
-    }
-  }
-  return JSON.stringify(reply);
+    
+  })
+  const results = await Promise.all(promises)
+  reply.entries = results;
+  return JSON.stringify(reply)
 }
 
 //creates a dummy object, required for building ejs template
