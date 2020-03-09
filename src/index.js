@@ -4,7 +4,7 @@ const {app, http} = require('./helpers/express')
 //socket.io running on http instance
 const io = require('socket.io')(http);
 //application logic etc
-const {connectToHost, measureHosts, dummyReply} = require('./helpers/helper');
+const {connectToHost, dummyReply} = require('./helpers/helper');
 const {hosts, hostnames} = require('./helpers/hosts');
 const dummyHostArr = dummyReply(hostnames)
 
@@ -18,15 +18,8 @@ app.get('/view', async (req, res) =>{
   res.render('index', {req: req, data: dummyHostArr, currenthost: process.env.hostname, hosts: hosts, hostnames: hostnames});  
 });
 
-//Measurement route - connects to all configured hosts and requests /test
-app.get('/measure', async (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  const reply = await connectToHost(hosts);
-  res.send(reply);
-});
-
 //route for connection testing - returns configured shorthand hostname
-app.get('/test', async (req, res) =>{
+app.get('/measure', async (req, res) =>{
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(process.env.hostname));
 });
