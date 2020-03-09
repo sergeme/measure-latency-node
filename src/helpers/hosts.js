@@ -14,14 +14,12 @@ const hostnames = [
 
 const hosts = [
   'http://localhost:3000',
-  'http://localhost:3001',
-  'https://eu.test.sersch.me'
+  'http://localhost:3001'
 ]
 
 const hostnames = [
   'localhost',
-  'testhost',
-  'eu'
+  'testhost'
 ]
 
 module.exports = {
