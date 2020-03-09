@@ -32,7 +32,6 @@ const connectToHost = async (hosts) => {
     } 
     catch (error) {
       console.log(`${host.name} not running: ${error.name}`)
-      console.log(error)
     }
   })
   const results = await Promise.all(promises)
