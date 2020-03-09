@@ -1,17 +1,19 @@
 const hosts = [
-  'https://eu.test.sersch.me',
-  'https://usa.test.sersch.me',
-  'https://asia.test.sersch.me',
-  'https://aus.test.sersch.me'
-]
-
-const hostnames = [
-  'eu',
-  'usa',
-  'asia',
-  'aus'
+  {
+    name: 'eu',
+    fqdn: 'https://eu.test.sersch.me'
+  },{
+    name: 'usa',
+    fqdn: 'https://usa.test.sersch.me'
+  },{
+    name: 'asia',
+    fqdn: 'https://asia.test.sersch.me'
+  },{
+    name: 'aus',
+    fqdn: 'https://aus.test.sersch.me'
+  }
 ]
 
 module.exports = {
-  hosts, hostnames
+  hosts
 }
