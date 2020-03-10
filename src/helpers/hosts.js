@@ -1,3 +1,8 @@
+/*
+replace these entries with your own.
+process.env.hostname (.env file) should be identical to the corresponding hosts.name entry
+*/
+
 const hosts = [
   {
     name: 'eu',
